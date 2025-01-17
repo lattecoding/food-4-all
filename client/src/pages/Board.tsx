@@ -93,7 +93,7 @@ const Board = () => {
       {!loginCheck ? (
         <div className="login-notice">
           <div className="page-title border rounded-3">
-            <h1>Let's Get Cooking</h1>
+            <h1>Food 4 All</h1>
           </div>
           <img
             src="/landingpage.jpeg"
@@ -108,7 +108,8 @@ const Board = () => {
         <div className="container-xl">
           <div className="search-container">
             <form>
-              <input className="search-form"
+              <input
+                className="search-form"
                 type="text"
                 placeholder="Search for a recipe or video..."
                 value={searchQuery}
