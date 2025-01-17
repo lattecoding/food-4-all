@@ -1,0 +1,382 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap");
+
+:root {
+    font-family: "Inter Tight", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-input-placeholder,
+input:-moz-placeholder {
+    text-align: right; /* Combine placeholder styles */
+}
+
+a {
+    font-weight: 500;
+    color: #000;
+    text-decoration: inherit;
+}
+
+a:hover {
+    color: #535bf2;
+}
+
+body {
+    background: #ecf0f1;
+    margin: 0;
+    min-width: 320px;
+}
+
+h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+}
+
+button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+button:hover {
+    border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+}
+
+main {
+    color: black;
+    width: 100%;
+    min-height: 100vh;
+    /* display: flex; */
+}
+
+tr {
+    border-radius: 10px;
+    background-color: #000;
+    color: white;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #333;
+}
+
+
+   .search-container {
+    background-image:url("knife.jpg");
+    background-repeat: repeat-x;
+    background-size:cover;
+    width: 90%;
+    margin: 40px;
+    display: flex;
+   justify-content: center;
+    padding:15%;
+ 
+ 
+    
+    
+}
+
+.search-form {
+   
+
+    align-self: center;
+    width: 300px;
+    margin-left:15%;
+    
+}
+
+
+
+.search-buttons {
+
+    margin-left: 18%;
+    margin-right:15%;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10%;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 70px; /* Optional: adds space between buttons */
+    width: 50%;
+    
+
+  
+}
+
+.image-landing {
+    width: 60px;
+    height: 60px;
+}
+
+.container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+}
+.ktool {
+    background-image: url("../kitchen-tools.jpg");
+    background-repeat: repeat-x;
+    background-size: cover;
+}
+
+.form {
+    width: 40%;
+    max-width: 400px; /* Limit the maximum width for smaller screens */
+    background-color: #ffffff;
+    padding: 2rem; /* Add some padding for spacing */
+    border-radius: 10px; /* Optional: Round the corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form > h1,
+.form > label {
+    color: Black;
+}
+
+.form > input {
+    width: 200px;
+    margin-bottom: 6%;
+    margin-top: 1%;
+}
+
+.form > label {
+    margin-top: 7%;
+    margin-bottom: 3%;
+    margin-left: 16%;
+    align-self: flex-start;
+}
+
+.form button {
+    margin-top: 6%;
+    margin-bottom: 35%;
+}
+
+.form textarea {
+    resize: both;
+    min-height: 30px;
+    min-width: 30px;
+}
+
+.editBtn {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+.deleteBtn {
+    background-color: #f9f9f9;
+    font-weight: 500;
+    color: black;
+    text-decoration: inherit;
+}
+
+.deleteBtn:hover {
+    color: #535bf2;
+}
+
+
+
+ 
+
+
+.login-notice {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.recipe-results {
+    display: grid;
+    grid-template-columns: 250px 250px 250px;
+    gap: 1.5rem; /* Space between cards */
+    padding: 1rem; /* Padding around the grid */
+    justify-content: center;
+    align-content: center;
+    margin: 0 auto;
+}
+
+.recipe-card {
+    background: #fff; /* Background color for cards */
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow */
+    overflow: hidden; /* Ensure content doesn't overflow the card */
+    text-align: center;
+}
+
+.recipe-card img {
+    width: 100%; /* Full width image */
+    height: auto;
+    border-bottom: 1px solid #ddd; /* Divider between image and content */
+}
+
+.recipe-card h3 {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.recipe-card a {
+    display: inline-block;
+    margin: 0.5rem 0;
+    color: #007bff; /* Link color */
+    text-decoration: none;
+}
+
+.recipe-card a:hover {
+    text-decoration: underline;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        color: #213547;
+        background-color: #ffffff;
+    }
+    a:hover {
+        color: #747bff;
+    }
+    button {
+        background-color: #ffffff;
+    }
+}
+
+/* Vanna stuff */
+.btn-login {
+    margin-left: 1rem;
+}
+.btn-login a:hover,
+.btn-login:hover a {
+    color: #fff;
+}
+.btn-login a {
+    color: #198754;
+}
+
+#navbarNav {
+    justify-content: center;
+}
+.nav-link {
+    color: #000;
+}
+.navbar-collapse {
+    justify-content: right !important;
+}
+
+.login-notice h1 {
+    margin: 1rem;
+}
+
+.video-results {
+    display: grid;
+    grid-template-columns: 250px 250px 250px;
+    gap: 1.5rem; /* Space between cards */
+    padding: 1rem; /* Padding around the grid */
+    justify-content: center;
+    align-content: center;
+    margin: 0 auto;
+}
+
+.video-card {
+    background: #fff; /* Background color for cards */
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow */
+    overflow: hidden; /* Ensure content doesn't overflow the card */
+    text-align: center;
+}
+
+.video-card img {
+    width: 100%; /* Full width image */
+    height: auto;
+    border-bottom: 1px solid #ddd; /* Divider between image and content */
+}
+
+.video-card h3 {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.video-card a {
+    display: inline-block;
+    margin: 0.5rem 0;
+    color: #007bff; /* Link color */
+    text-decoration: none;
+}
+
+.video-card a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 1200px) {
+    .recipe-results {
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(200px, 1fr)
+        ); /* Adjust column width on medium screens */
+    }
+    .video-results {
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(200px, 1fr)
+        ); /* Adjust column width on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .recipe-results {
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(150px, 1fr)
+        ); /* Adjust column width on small screens */
+    }
+    .video-results {
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(150px, 1fr)
+        ); /* Adjust column width on small screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .recipe-results {
+        grid-template-columns: 1fr; /* Stack the cards vertically on extra small screens */
+    }
+    .video-results {
+        grid-template-columns: 1fr; /* Stack the cards vertically on extra small screens */
+    }
+    .form {
+        width: 90%; /* Fill most of the screen width */
+        padding: 1rem; /* Adjust padding for space efficiency */
+    }
+
+    .form input,
+    .form button {
+        width: 100%; /* Full width inputs and buttons */
+        font-size: 1rem; /* Maintain readability */
+    }
+}
