@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
-import { User } from '../models/user.js';
+import { Request, Response } from "express";
+import User from "../models/user.js";
 
 // GET /Users
 export const getAllUsers = async (_req: Request, res: Response) => {
   try {
-    const users = await User.findAll({
-      attributes: { exclude: ['password'] }
-    });
+    // Mongoose: .find() retrieves all documents
+    // .select("-password") excludes the `password` field in the result
+    const users = await User.find().select("-password");
     res.json(users);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -17,13 +17,12 @@ export const getAllUsers = async (_req: Request, res: Response) => {
 export const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const user = await User.findByPk(id, {
-      attributes: { exclude: ['password'] }
-    });
+    // Mongoose: .findById() to find by _id
+    const user = await User.findById(id).select("-password");
     if (user) {
       res.json(user);
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: "User not found" });
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -34,6 +33,7 @@ export const getUserById = async (req: Request, res: Response) => {
 export const createUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
   try {
+    // Mongoose: .create() to insert a new document
     const newUser = await User.create({ username, password });
     res.status(201).json(newUser);
   } catch (error: any) {
@@ -46,14 +46,18 @@ export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { username, password } = req.body;
   try {
-    const user = await User.findByPk(id);
+    // Mongoose: .findByIdAndUpdate()
+    // { new: true } returns the updated document
+    const user = await User.findByIdAndUpdate(
+      id,
+      { username, password },
+      { new: true },
+    ).select("-password");
+
     if (user) {
-      user.username = username;
-      user.password = password;
-      await user.save();
       res.json(user);
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: "User not found" });
     }
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -64,12 +68,12 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const user = await User.findByPk(id);
+    // Mongoose: .findByIdAndDelete()
+    const user = await User.findByIdAndDelete(id);
     if (user) {
-      await user.destroy();
-      res.json({ message: 'User deleted' });
+      res.json({ message: "User deleted" });
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: "User not found" });
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
