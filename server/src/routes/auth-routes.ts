@@ -1,13 +1,13 @@
 import { Router, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/user.js";
 import bcrypt from "bcrypt";
+import User from "../models/user.js";
 
 export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
   try {
-    // Find the user by username
-    const user = await User.findOne({ where: { username } });
+    // Find the user by username (Mongoose syntax, no "where")
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -20,13 +20,14 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Generate JWT token
+    // Use user._id or define a virtual "id" if you want "id" in the token.
     const token = jwt.sign(
-      { username: user.username, id: user.id },
-      process.env.JWT_SECRET_KEY as string, // Ensure this key is in your .env
+      { username: user.username, userId: user._id },
+      process.env.JWT_SECRET_KEY as string,
       { expiresIn: "1h" },
     );
 
-    // Return the token in the response
+    // Return the token
     return res.json({ token });
   } catch (error) {
     console.error(error);
@@ -34,7 +35,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-// POST route for login
+// Import/Compose router
 const router = Router();
 router.post("/login", login);
 
