@@ -1,24 +1,5 @@
 import dotenv from "dotenv";
+import User from "./user.js";
 dotenv.config();
 
-import { Sequelize } from "sequelize";
-import { UserFactory } from "./user.js";
-
-const sequelize = process.env.DB_URL
-  ? new Sequelize(process.env.DB_URL)
-  : new Sequelize(
-      process.env.DB_NAME || "",
-      process.env.DB_USER || "",
-      process.env.DB_PASSWORD,
-      {
-        host: "localhost",
-        dialect: "postgres",
-        dialectOptions: {
-          decimalNumbers: true,
-        },
-      },
-    );
-
-const User = UserFactory(sequelize);
-
-export { sequelize, User };
+export { User };
