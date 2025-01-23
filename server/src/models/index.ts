@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import User from "./user.js";
+import User from "./User.js";
 dotenv.config();
 
 export { User };
