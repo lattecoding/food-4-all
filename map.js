@@ -1,4 +1,4 @@
-function initMap() {
+/* function initMap() {
     const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 12,
         center: { lat: 40.7128, lng: -74.0060 }, // Example: NYC
@@ -23,4 +23,4 @@ function initMap() {
             });
         }
     });
-}
+} */
