@@ -5,6 +5,7 @@ import express, { Request } from "express";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from '@apollo/server/express4';
 import { GraphQLFormattedError } from 'graphql';
+import routes from "./routes/index.js"
 import db from "./config/connection.js";
 import typeDefs from "./schema/typeDefs.js";
 import { resolvers } from "./schema/resolvers.js";
@@ -22,6 +23,8 @@ const PORT = process.env.PORT || 3001;
 // Express middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(routes);
 
 // Initialize Apollo Server
 const server = new ApolloServer<MyContext>({
