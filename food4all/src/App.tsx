@@ -10,7 +10,7 @@ function App() {
   const [results, setResults] = useState<google.maps.places.PlaceResult[]>([]);
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [showMapResults, setShowMapResults] = useState(false); // Track map and results visibility
+  const [showMapResults, setShowMapResults] = useState(false);
 
   useEffect(() => {
     const initMap = () => {
@@ -24,7 +24,6 @@ function App() {
       );
       setMap(mapInstance);
       setService(new google.maps.places.PlacesService(mapInstance));
-      console.log("Map initialized");
     };
 
     if (!window.google || !window.google.maps) {
@@ -59,9 +58,9 @@ function App() {
       return;
     }
 
-    setErrorMessage(""); // Clear previous errors
-    clearMarkers(); // Clear existing markers
-    setShowMapResults(true); // Hide map until results are fetched
+    setErrorMessage("");
+    clearMarkers();
+    setShowMapResults(false);
 
     const radiusInMeters = parseFloat(radius) * 1609.34;
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${zipCode}&key=AIzaSyAsJ1BR2yh-806KbmnN3PA-qxzw_2TJirA`;
@@ -86,40 +85,56 @@ function App() {
 
       service.nearbySearch(request, (places, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && places) {
-          setResults(places); // Update results in the list
-          setShowMapResults(true); // Show map and results
-          const newMarkers: google.maps.Marker[] = places.map((place) => {
-            if (place.geometry && place.geometry.location) {
-              const marker = new google.maps.Marker({
-                position: place.geometry.location,
-                map,
-                title: place.name,
-              });
+          const detailedResults: google.maps.places.PlaceResult[] = [];
+          const newMarkers: google.maps.Marker[] = [];
 
-              // Add an info window for each marker
-              const infoWindow = new google.maps.InfoWindow({
-                content: `<div>
-                  <h3>${place.name}</h3>
-                  <p>Rating: ${place.rating || "N/A"}</p>
-                  <p>${place.vicinity || "No address available"}</p>
-                  ${
-                    place.website
-                      ? `<a href="${place.website}" target="_blank">Visit Website</a>`
-                      : ""
-                  }
-                </div>`,
-              });
+          places.forEach((place) => {
+            const detailsRequest = { placeId: place.place_id };
 
-              marker.addListener("click", () => {
-                infoWindow.open(map, marker);
-              });
+            service.getDetails(detailsRequest, (placeDetails, detailsStatus) => {
+              if (detailsStatus === google.maps.places.PlacesServiceStatus.OK && placeDetails) {
+                detailedResults.push(placeDetails);
 
-              return marker;
-            }
-            return null;
+                if (placeDetails.geometry?.location) {
+                  const marker = new google.maps.Marker({
+                    position: placeDetails.geometry.location,
+                    map,
+                    title: placeDetails.name,
+                  });
+
+                  const infoWindow = new google.maps.InfoWindow({
+                    content: `<div>
+                      <h3>${placeDetails.name}</h3>
+                      <p>Rating: ${placeDetails.rating || "N/A"}</p>
+                      <p>${placeDetails.vicinity || "No address available"}</p>
+                      ${
+                        placeDetails.formatted_phone_number
+                          ? `<p>Phone: ${placeDetails.formatted_phone_number}</p>`
+                          : ""
+                      }
+                      ${
+                        placeDetails.website
+                          ? `<a href="${placeDetails.website}" target="_blank">Visit Website</a>`
+                          : ""
+                      }
+                    </div>`,
+                  });
+
+                  marker.addListener("click", () => {
+                    infoWindow.open(map, marker);
+                  });
+
+                  newMarkers.push(marker);
+                }
+
+                if (detailedResults.length === places.length) {
+                  setResults(detailedResults);
+                  setMarkers(newMarkers);
+                  setShowMapResults(true);
+                }
+              }
+            });
           });
-
-          setMarkers(newMarkers.filter((marker): marker is google.maps.Marker => marker !== null));
         } else {
           setErrorMessage("No places found. Try again.");
         }
@@ -135,10 +150,7 @@ function App() {
     const stars = [];
     for (let i = 1; i <= maxStars; i++) {
       stars.push(
-        <span
-          key={i}
-          className={`star ${i <= Math.round(rating) ? "filled" : "empty"}`}
-        >
+        <span key={i} className={`star ${i <= Math.round(rating) ? "filled" : "empty"}`}>
           {i <= Math.round(rating) ? "★" : "☆"}
         </span>
       );
@@ -149,7 +161,6 @@ function App() {
   return (
     <div>
       <h1>Food 4 All</h1>
-      {/* Search Controls */}
       <div id="controls">
         <input
           type="text"
@@ -172,39 +183,46 @@ function App() {
         <button onClick={searchFood}>Search</button>
       </div>
 
-      {/* Display Error Message */}
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
-      {/* Map and Results Section */}
       <div
-  id="mapResultsContainer"
-  className={`map-results-container ${showMapResults ? "visible" : ""}`}
->
-  {/* Map */}
-  <div id="map" className="map"></div>
+        id="mapResultsContainer"
+        className={`map-results-container ${showMapResults ? "visible" : ""}`}
+      >
+        <div id="map" className="map"></div>
 
-  {/* Results List */}
-  <div id="results" style={{ flex: 1 }}>
-    <ul>
-      {results.map((place, index) => (
-        <li key={index}>
-          <div className="place-name">{place.name}</div>
-          <div className="place-rating">
-            Rating: {place.rating || "N/A"} {generateStars(place.rating || 0)}
-          </div>
-          <p>{place.vicinity}</p>
-          {place.website && (
-            <div className="place-website">
-              <a href={place.website} target="_blank" rel="noreferrer">
-                Visit Website
-              </a>
-            </div>
-          )}
-        </li>
-      ))}
-    </ul>
-  </div>
-</div>
+        <div id="results" className="results">
+          <ul>
+            {results.map((place, index) => (
+              <li key={index}>
+                <div className="place-name">{place.name}</div>
+                <div className="place-rating">
+                  Rating: {place.rating || "N/A"} {generateStars(place.rating || 0)}
+                </div>
+                <p>{place.vicinity}</p>
+                {place.formatted_phone_number && (
+                  <p>
+                    Phone:{" "}
+                    <a href={`tel:${place.formatted_phone_number}`}>
+                      {place.formatted_phone_number}
+                    </a>
+                  </p>
+                )}
+                <p>
+                  Website:{" "}
+                  {place.website ? (
+                    <a href={place.website} target="_blank" rel="noreferrer">
+                      Visit Website
+                    </a>
+                  ) : (
+                    "No website provided"
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
