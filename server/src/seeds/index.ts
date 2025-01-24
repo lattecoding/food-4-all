@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { seedUsers } from "./user-seeds.js";
 
-// You might want to load environment variables from .env
+// Load environment variables from .env
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -14,11 +14,9 @@ async function seedAll() {
     await mongoose.connect(MONGO_URL);
     console.log("Connected to MongoDB.");
 
-    // 2) Optional: Clean the DB
-    //    If you have multiple models, you could clear them all here.
-    //    For example: await mongoose.connection.dropDatabase();
-    //    Or just clean one collection:
-    //    await User.deleteMany({});
+    // 2) Drop the database
+    await mongoose.connection.dropDatabase();
+    console.log("Database dropped.");
 
     // 3) Seed data
     await seedUsers();
