@@ -14,10 +14,22 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Use Node 16
+      - name: Use Node 22
         uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Check Code Coverage
+        run: npm run coverage
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Check Code Formatting
+        run: npm run format:check
