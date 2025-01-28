@@ -47,8 +47,7 @@ const server = new ApolloServer<MyContext>({
     app.use(
       "/graphql",
       expressMiddleware(server, {
-        context: async ({ req }) => {
-          // If the authenticateToken middleware populates req.user
+        context: async ({ req }: { req: Request }) => {
           return { user: (req as any).user };
         },
       }),

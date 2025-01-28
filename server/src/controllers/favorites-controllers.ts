@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import User from "../models/user";
-import Restaurant from "../models/Restaurants";
-import Favorite from "../models/Favorites";
+import User from "../models/user.js";
+import Restaurant from "../models/Restaurants.js";
+import Favorite from "../models/Favorites.js";
 
 export const addFavorite = async (req: Request, res: Response) => {
   try {
