@@ -5,6 +5,7 @@ import { Recipe } from "../interfaces/Recipe";
 import { Video } from "../interfaces/Video";
 import { YouTubeAPIItem } from "../interfaces/YouTubeAPIItem";
 import axios from "axios";
+import { Box } from "@mui/material";
 
 const Board = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -96,7 +97,7 @@ const Board = () => {
             <h1>Food 4 All</h1>
           </div>
           <img
-            src="/landingpage.jpeg"
+            src="/globe.jpg"
             className="img-fluid border rounded-3 shadow-lg mb-4"
             alt="image-landing"
             width="700"
@@ -105,8 +106,15 @@ const Board = () => {
           />
         </div>
       ) : (
-        <div className="container-xl">
-          <div className="search-container">
+          <Box sx={{ width:"100%"}}>
+          <Box sx={{
+                          backgroundImage:"url('knife.jpg')",
+                          backgroundRepeat: "repeat-x",
+                          backgroundSize:"cover",
+                          display: "flex",
+                          justifyContent: "center",
+                          padding: "15%",
+                    }}>
             <form>
               <input
                 className="search-form"
@@ -130,7 +138,7 @@ const Board = () => {
                 </button>
               </div>
             </form>
-          </div>
+          </Box>
 
           {/* Show Recipes */}
           {searchType === "recipes" && recipes.length > 0 && (
@@ -169,7 +177,7 @@ const Board = () => {
               ))}
             </div>
           )}
-        </div>
+        </Box>
       )}
     </>
   );
