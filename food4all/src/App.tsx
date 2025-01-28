@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -9,8 +9,10 @@ function App() {
   const [service, setService] = useState<google.maps.places.PlacesService | null>(null);
   const [results, setResults] = useState<google.maps.places.PlaceResult[]>([]);
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
+  const [favorites, setFavorites] = useState<google.maps.places.PlaceResult[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [showMapResults, setShowMapResults] = useState(false);
+  const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null); // Lazy initialization
 
   useEffect(() => {
     const initMap = () => {
@@ -24,6 +26,7 @@ function App() {
       );
       setMap(mapInstance);
       setService(new google.maps.places.PlacesService(mapInstance));
+      setInfoWindow(new google.maps.InfoWindow()); // Initialize InfoWindow here
     };
 
     if (!window.google || !window.google.maps) {
@@ -88,8 +91,8 @@ function App() {
           const detailedResults: google.maps.places.PlaceResult[] = [];
           const newMarkers: google.maps.Marker[] = [];
 
-          places.forEach((place) => {
-            const detailsRequest = { placeId: place.place_id };
+          places.filter((place) => place.place_id).forEach((place) => {
+            const detailsRequest: google.maps.places.PlaceDetailsRequest = { placeId: place.place_id! };
 
             service.getDetails(detailsRequest, (placeDetails, detailsStatus) => {
               if (detailsStatus === google.maps.places.PlacesServiceStatus.OK && placeDetails) {
@@ -102,26 +105,29 @@ function App() {
                     title: placeDetails.name,
                   });
 
-                  const infoWindow = new google.maps.InfoWindow({
-                    content: `<div>
-                      <h3>${placeDetails.name}</h3>
-                      <p>Rating: ${placeDetails.rating || "N/A"}</p>
-                      <p>${placeDetails.vicinity || "No address available"}</p>
-                      ${
-                        placeDetails.formatted_phone_number
-                          ? `<p>Phone: ${placeDetails.formatted_phone_number}</p>`
-                          : ""
-                      }
-                      ${
-                        placeDetails.website
-                          ? `<a href="${placeDetails.website}" target="_blank">Visit Website</a>`
-                          : ""
-                      }
-                    </div>`,
-                  });
-
+                  // Add a click listener to open InfoWindow
                   marker.addListener("click", () => {
-                    infoWindow.open(map, marker);
+                    if (infoWindow) {
+                      infoWindow.close(); // Close the global InfoWindow if it’s already open
+                      infoWindow.setContent(`
+                        <div>
+                          <h3>${placeDetails.name}</h3>
+                          <p>Rating: ${placeDetails.rating || "N/A"}</p>
+                          <p>${placeDetails.vicinity || "No address available"}</p>
+                          ${
+                            placeDetails.formatted_phone_number
+                              ? `<p>Phone: ${placeDetails.formatted_phone_number}</p>`
+                              : ""
+                          }
+                          ${
+                            placeDetails.website
+                              ? `<a href="${placeDetails.website}" target="_blank">Visit Website</a>`
+                              : ""
+                          }
+                        </div>
+                      `);
+                      infoWindow.open(map, marker); // Open the InfoWindow on the selected marker
+                    }
                   });
 
                   newMarkers.push(marker);
@@ -156,6 +162,14 @@ function App() {
       );
     }
     return <div className="stars">{stars}</div>;
+  };
+
+  const addToFavorites = (place: google.maps.places.PlaceResult) => {
+    setFavorites((prev) => [...prev, place]);
+  };
+
+  const removeFromFavorites = (placeId: string | undefined) => {
+    setFavorites((prev) => prev.filter((fav) => fav.place_id !== placeId));
   };
 
   return (
@@ -200,28 +214,25 @@ function App() {
                   Rating: {place.rating || "N/A"} {generateStars(place.rating || 0)}
                 </div>
                 <p>{place.vicinity}</p>
-                {place.formatted_phone_number && (
-                  <p>
-                    Phone:{" "}
-                    <a href={`tel:${place.formatted_phone_number}`}>
-                      {place.formatted_phone_number}
-                    </a>
-                  </p>
-                )}
-                <p>
-                  Website:{" "}
-                  {place.website ? (
-                    <a href={place.website} target="_blank" rel="noreferrer">
-                      Visit Website
-                    </a>
-                  ) : (
-                    "No website provided"
-                  )}
-                </p>
+                <button onClick={() => addToFavorites(place)}>Add to Favorites</button>
               </li>
             ))}
           </ul>
         </div>
+      </div>
+
+      <div id="favorites">
+        <h2>Favorites</h2>
+        <ul>
+          {favorites.map((place, index) => (
+            <li key={index}>
+              <div className="place-name">{place.name}</div>
+              <button onClick={() => removeFromFavorites(place.place_id)}>
+                Remove from Favorites
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
