@@ -3,9 +3,9 @@ dotenv.config();
 
 import express, { Request } from "express";
 import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from '@apollo/server/express4';
-import { GraphQLFormattedError } from 'graphql';
-import routes from "./routes/index.js"
+import { expressMiddleware } from "@apollo/server/express4";
+import { GraphQLFormattedError } from "graphql";
+import routes from "./routes/index.js";
 import db from "./config/connection.js";
 import typeDefs from "./schema/typeDefs.js";
 import { resolvers } from "./schema/resolvers.js";
@@ -31,7 +31,7 @@ const server = new ApolloServer<MyContext>({
   typeDefs,
   resolvers,
   formatError: (formattedError: GraphQLFormattedError) => {
-    console.error('GraphQL Error:', formattedError);
+    console.error("GraphQL Error:", formattedError);
     return formattedError;
   },
 });
@@ -43,19 +43,22 @@ const server = new ApolloServer<MyContext>({
     console.log("✅ Database connected successfully.");
 
     await server.start();
-    
+
     app.use(
-      '/graphql',
+      "/graphql",
       expressMiddleware(server, {
-        context: async ({ req }: { req: Request }) => {
+        context: async ({ req }) => {
+          // If the authenticateToken middleware populates req.user
           return { user: (req as any).user };
         },
-      })
+      }),
     );
 
     app.listen(PORT, () => {
       console.log(`🚀 API server running on port ${PORT}`);
-      console.log(`🌐 GraphQL Playground available at http://localhost:${PORT}/graphql`);
+      console.log(
+        `🌐 GraphQL Playground available at http://localhost:${PORT}/graphql`,
+      );
     });
   } catch (err) {
     console.error("❌ Server initialization error:", err);
