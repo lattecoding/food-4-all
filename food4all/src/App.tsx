@@ -206,19 +206,33 @@ function App() {
         <div id="map" className="map"></div>
 
         <div id="results" className="results">
-          <ul>
-            {results.map((place, index) => (
-              <li key={index}>
-                <div className="place-name">{place.name}</div>
-                <div className="place-rating">
-                  Rating: {place.rating || "N/A"} {generateStars(place.rating || 0)}
-                </div>
-                <p>{place.vicinity}</p>
-                <button onClick={() => addToFavorites(place)}>Add to Favorites</button>
-              </li>
-            ))}
-          </ul>
+  <ul>
+    {results.map((place, index) => (
+      <li key={index}>
+        <div className="place-name">{place.name}</div>
+        <div className="place-rating">
+          Rating: {place.rating || "N/A"} {generateStars(place.rating || 0)}
         </div>
+        <p>{place.vicinity}</p>
+        {place.formatted_phone_number ? (
+          <p>Phone: {place.formatted_phone_number}</p>
+        ) : (
+          <p>Phone not available</p>
+        )}
+        {place.website ? (
+          <a href={place.website} target="_blank" rel="noreferrer">
+            Visit Website
+          </a>
+        ) : (
+          <p>No Website Provided</p>
+        )}
+        <button onClick={() => addToFavorites(place)}>Add to Favorites</button>
+      </li>
+    ))}
+  </ul>
+</div>
+
+
       </div>
 
       <div id="favorites">

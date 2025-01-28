@@ -40,11 +40,16 @@ const MapResults: React.FC<MapResultsProps> = ({
               <div className="place-rating">
                 Rating: {place.rating || "N/A"} {generateStars(place.rating || 0)}
               </div>
-              {place.website && (
+              <p>{place.vicinity || "Address not available"}</p>
+              {place.website ? (
                 <div className="place-website">
                   <a href={place.website} target="_blank" rel="noreferrer">
                     Visit Website
                   </a>
+                </div>
+              ) : (
+                <div className="place-website">
+                  <p>No Website Provided</p>
                 </div>
               )}
             </li>
