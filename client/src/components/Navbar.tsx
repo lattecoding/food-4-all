@@ -53,10 +53,11 @@ const Navbar = () => {
                 Hey, {auth.getProfile()?.username || "User"}!
                </span>
 
-                <Button
+                <Button 
                   onClick={() => {
                     auth.logout();
                   }}
+                  sx={{ color: "black" }} // Updated color to black
                 >
                   Logout
                 </Button>
