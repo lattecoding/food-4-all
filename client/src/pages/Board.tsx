@@ -5,7 +5,11 @@ import { Recipe } from "../interfaces/Recipe";
 import { Video } from "../interfaces/Video";
 import { YouTubeAPIItem } from "../interfaces/YouTubeAPIItem";
 import axios from "axios";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
+import BottomNavigationAction from "@mui/material/BottomNavigationAction";
+import RestoreIcon from "@mui/icons-material/Restore";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 const Board = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -13,14 +17,10 @@ const Board = () => {
   const [loginCheck, setLoginCheck] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [videos, setVideos] = useState<Video[]>([]);
-  const [searchType, setSearchType] = useState<"youtube" | "recipes" | null>(
-    null,
-  );
+  const [searchType, setSearchType] = useState<"youtube" | "recipes" | null>(null);
 
   const checkLogin = () => {
-    if (auth.loggedIn()) {
-      setLoginCheck(true);
-    }
+    setLoginCheck(auth.loggedIn());
   };
 
   useLayoutEffect(() => {
@@ -31,7 +31,7 @@ const Board = () => {
     try {
       const apiKey = import.meta.env.VITE_SPOON_API;
       const response = await fetch(
-        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=${apiKey}`,
+        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&apiKey=${apiKey}`
       );
       const data = await response.json();
       setRecipes(data.results || []);
@@ -42,28 +42,23 @@ const Board = () => {
   };
 
   const handleSearchVideos = async (query: string) => {
-    const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY; // Get API key from the environment file
+    const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
     try {
-      const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/search`,
-        {
-          params: {
-            part: "snippet",
-            q: query,
-            type: "video",
-            key: API_KEY, // Use the API key here
-            maxResults: 6,
-          },
+      const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+        params: {
+          part: "snippet",
+          q: query,
+          type: "video",
+          key: API_KEY,
+          maxResults: 6,
         },
-      );
+      });
 
-      const videoData: Video[] = response.data.items.map(
-        (item: YouTubeAPIItem) => ({
-          id: item.id.videoId || "",
-          title: item.snippet.title || "",
-          thumbnail: item.snippet.thumbnails.high.url || "",
-        }),
-      );
+      const videoData: Video[] = response.data.items.map((item: YouTubeAPIItem) => ({
+        id: item.id.videoId || "",
+        title: item.snippet.title || "",
+        thumbnail: item.snippet.thumbnails.high.url || "",
+      }));
 
       setVideos(videoData);
     } catch (error) {
@@ -73,13 +68,13 @@ const Board = () => {
 
   const handleSearch = (e: React.FormEvent, type: "youtube" | "recipes") => {
     e.preventDefault();
-    setSearchType(type); // Set the search type based on which button was clicked
+    setSearchType(type);
     if (searchQuery.trim()) {
       if (type === "recipes") {
-        setVideos([]); // Clear videos when switching to recipe search
+        setVideos([]);
         fetchRecipes(searchQuery);
       } else if (type === "youtube") {
-        setRecipes([]); // Clear recipes when switching to video search
+        setRecipes([]);
         handleSearchVideos(searchQuery);
       }
     }
@@ -106,15 +101,20 @@ const Board = () => {
           />
         </div>
       ) : (
-          <Box sx={{ width:"100%"}}>
-          <Box sx={{
-                          backgroundImage:"url('knife.jpg')",
-                          backgroundRepeat: "repeat-x",
-                          backgroundSize:"cover",
-                          display: "flex",
-                          justifyContent: "center",
-                          padding: "15%",
-                    }}>
+        <Box sx={{ width: "100%", position: "relative" }}>
+          {/* Background Image Section */}
+          <Box
+            sx={{
+              backgroundImage: "url('knife.jpg')",
+              backgroundRepeat: "repeat-x",
+              backgroundSize: "cover",
+              display: "flex",
+              justifyContent: "center",
+              padding: "15%",
+              position: "relative",
+            }}
+          >
+            {/* Search Form */}
             <form>
               <input
                 className="search-form"
@@ -124,20 +124,33 @@ const Board = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <div className="search-buttons">
-                <button
-                  type="button"
-                  onClick={(e) => handleSearch(e, "recipes")}
-                >
+                <button type="button" onClick={(e) => handleSearch(e, "recipes")}>
                   Search Recipes
                 </button>
-                <button
-                  type="button"
-                  onClick={(e) => handleSearch(e, "youtube")}
-                >
+                <button type="button" onClick={(e) => handleSearch(e, "youtube")}>
                   Search Videos
                 </button>
               </div>
             </form>
+
+            {/* Right-Side Navigation Icons */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                right: "20px",
+                transform: "translateY(-50%)",
+                backgroundColor: "rgba(255, 255, 255, 0.7)", // Slight transparency
+                borderRadius: "10px",
+                padding: "8px",
+              }}
+            >
+              <Stack spacing={2}>
+                <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
+                <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+                <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
+              </Stack>
+            </Box>
           </Box>
 
           {/* Show Recipes */}
@@ -166,11 +179,7 @@ const Board = () => {
                 <div key={video.id} className="video-card">
                   <img src={video.thumbnail} alt={video.title} />
                   <h3>{video.title}</h3>
-                  <a
-                    href={`https://www.youtube.com/watch?v=${video.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer">
                     Watch Video
                   </a>
                 </div>
