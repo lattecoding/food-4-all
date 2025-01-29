@@ -20,6 +20,7 @@ export const resolvers = {
     },
     login: async (_: unknown, { username }: { username: string; password: string }) => {
       const user = await User.findOne({ username });
+      console.log ('Here is user', user)
       if (!user) {
         throw new GraphQLError('Invalid credentials');
       }
