@@ -41,33 +41,3 @@ Luis - https://github.com/lattecoding
 
 ## Video Demo
 (put a video demo here)
-
-
-#######################
-To Do to convert to GraphQL
-- typeDefs.ts
-    define all of types, queries, and mutations here
-    look at API calls in original app
-        two kinds we can make in graphQL:
-        query - get request (just reading stuff, not changing anything)
-        mutations - put, post, delete (changing the original)
-
-    these don't say HOW to do anything, they just say what will be returned for a given request
-
-- resolvers.ts
-    where we handle how to do the promises defined on the typeDefs
-    should have a function for each of the queries and mutations in tyepDefs
-    import models for database (will be Mongoose)
-
-- server.ts
-    apollo server library comes into play here
-        server on backend code. will use boilerplate code to setup as middleware wrapped around express
-
-- graphQL server, can use mutations to build the client side code
-
-Debugging:
-    if returns null, look at database to see if adds user, then look at resolvers
-    add console logs to see where errors are
-
-
-    start with models, then do the schema - typeDefs, then resolvers, server Apollo files
