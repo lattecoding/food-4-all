@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
 import App from "./App.tsx";
-import Board from "./pages/Board.tsx";
+import Board from "./pages/NewBoard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Login from "./pages/Login.tsx";
 import Navbar from './components/Navbar';
