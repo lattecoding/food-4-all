@@ -1,0 +1,2 @@
+//This will be Netra's page to add in favorites jpeg
+// Need to write the code the will allow  user to click on Favorites icon (this is how it's labeled in Board.tsx to reference) <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />, the user should be redirected to favorites page in which our 'dummy' favorites will display.

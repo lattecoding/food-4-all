@@ -1,8 +1,6 @@
 import { UserLogin } from "../interfaces/UserLogin";
 import { UserSignup } from "../interfaces/UserSignup";
 
-
-
 // Function for logging in
 const login = async (userInfo: UserLogin) => {
   try {

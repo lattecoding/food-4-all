@@ -35,13 +35,13 @@ const Login = () => {
     }
 
     try {
-      const data = await login({
+      const token = await login({
         username: loginData.username,
         password: loginData.password,
       });
 
-      Auth.login(data);
-      navigate("/dashboard");
+      Auth.login(token);
+      navigate("/");
     } catch (err) {
       setError("Login failed. Please try again.");
     }
@@ -69,7 +69,12 @@ const Login = () => {
         }}
       >
         {/* Header Text */}
-        <Typography variant="h4" fontWeight="bold" color="#100f0d" sx={{ mb: 2 }}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          color="#100f0d"
+          sx={{ mb: 2 }}
+        >
           Welcome, Fellow Foodie!
         </Typography>
         <Typography variant="body2" color="#38793b" sx={{ mb: 4 }}>
@@ -121,7 +126,6 @@ const Login = () => {
         {/* Divider for visual separation */}
         <Divider sx={{ my: 4, width: "100%", bgcolor: "#100f0d" }} />
 
-
         {/* New User Section */}
         <Typography variant="body1" fontWeight="bold" color="#100f0d">
           New User?
@@ -133,7 +137,7 @@ const Login = () => {
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate("/signup")} // Correctly navigate to the SignUp page
           sx={{
             color: "#100f0d",
             borderColor: "#100f0d",

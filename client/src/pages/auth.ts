@@ -25,15 +25,18 @@ class AuthService {
   }
 
   getToken(): string | null {
+    // Retrieve the token from localStorage
     return localStorage.getItem("jwtToken");
   }
 
   login(idToken: string) {
+    // Store the token in localStorage
     localStorage.setItem("jwtToken", idToken);
     window.location.assign("/"); // Redirect to home or dashboard
   }
 
   logout() {
+    // Remove the token from localStorage
     localStorage.removeItem("jwtToken");
     window.location.assign("/login"); // Redirect to login page
   }

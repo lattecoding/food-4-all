@@ -7,14 +7,14 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
 interface SignUpData {
-  name: string;
+  username: string;
   email: string;
   password: string;
 }
 
 const SignUp = () => {
   const [signUpData, setSignUpData] = useState<SignUpData>({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -34,7 +34,7 @@ const SignUp = () => {
     setError(null);
     setLoading(true);
 
-    if (!signUpData.name || !signUpData.email || !signUpData.password) {
+    if (!signUpData.username || !signUpData.email || !signUpData.password) {
       setError("All fields are required");
       setLoading(false);
       return;
@@ -80,9 +80,9 @@ const SignUp = () => {
         <TextField
           fullWidth
           required
-          label="Name"
-          name="name"
-          value={signUpData.name}
+          label="Username"
+          name="username"
+          value={signUpData.username}
           onChange={handleChange}
           margin="normal"
         />
