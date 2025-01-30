@@ -26,8 +26,7 @@ const restaurantSchema = new Schema<IRestaurant>(
     website: {
       type: String,
       validate: {
-        validator: (v: string) =>
-          /^https?:\/\/[^\s$.?#].[^\s]*$/.test(v),
+        validator: (v: string) => /^https?:\/\/[^\s$.?#].[^\s]*$/.test(v),
         message: "Invalid URL format for the website.",
       },
       trim: true, // Optional: Trim whitespace from the website
@@ -51,7 +50,7 @@ const restaurantSchema = new Schema<IRestaurant>(
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt
-  }
+  },
 );
 
 // Define and export the Restaurant model

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Food 4 All</title>
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="map.css">
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAsJ1BR2yh-806KbmnN3PA-qxzw_2TJirA&libraries=places&callback=initMap"
+        async
+        defer>
+    </script>
+    <style>
+        /* Add inline styles for stars (or include in map.css) */
+        .stars {
+            display: inline-flex;
+            gap: 2px;
+            vertical-align: middle;
+        }
+
+        .stars .star {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .stars .star.filled {
+            color: #FFD700; /* Gold */
+        }
+
+        .stars .star.empty {
+            color: #ccc; /* Gray */
+        }
+    </style>
+</head>
+<body>
+    <h1>Food 4 All</h1>
+    <!-- Search Controls -->
+    <div id="controls">
+        <input id="foodType" type="text" placeholder="Enter food type (e.g., pizza)">
+        <input id="zipCode" type="text" placeholder="Enter zip code">
+        <input id="radius" type="number" placeholder="Radius (miles)">
+        <button onclick="searchFood()">Search</button>
+    </div>
+
+    <!-- Map and Results Section -->
+    <div id="mapResultsContainer" style="display: flex; gap: 20px;">
+        <!-- Map Display -->
+        <div id="map" style="flex: 1;"></div>
+
+        <!-- Results List -->
+        <div id="results" style="flex: 1;">
+            <ul id="placesList"></ul>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        let map;
+        let service;
+        const markers = [];
+        const infoWindows = [];
+
+        function initMap() {
+            const defaultLocation = { lat: 40.7128, lng: -74.0060 }; // NYC
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: defaultLocation,
+            });
+
+            service = new google.maps.places.PlacesService(map);
+        }
+
+        async function searchFood() {
+            const foodType = document.getElementById("foodType").value;
+            const zipCode = document.getElementById("zipCode").value;
+            const radiusInMiles = parseFloat(document.getElementById("radius").value);
+
+            if (!foodType || !zipCode || !radiusInMiles) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // Convert miles to meters
+            const radiusInMeters = radiusInMiles * 1609.34;
+
+            // Convert Zip Code to Lat/Lng
+            const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${zipCode}&key=AIzaSyAsJ1BR2yh-806KbmnN3PA-qxzw_2TJirA`;
+            try {
+                const response = await fetch(geocodeUrl);
+                const data = await response.json();
+
+                if (!data.results.length) {
+                    alert("Invalid zip code. Please try again.");
+                    return;
+                }
+
+                const location = data.results[0].geometry.location;
+
+                // Center the map at the location
+                map.setCenter(location);
+
+                // Search for Food Places
+                const request = {
+                    location: location,
+                    radius: radiusInMeters,
+                    keyword: foodType,
+                };
+
+                service.nearbySearch(request, (results, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        clearMarkers();
+                        displayPlaces(results);
+                    } else {
+                        alert("Failed to fetch places. Try again.");
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching coordinates or places:", error);
+                alert("Something went wrong. Please try again.");
+            }
+        }
+
+        function clearMarkers() {
+            markers.forEach((marker) => marker.setMap(null));
+            markers.length = 0;
+            infoWindows.forEach((infoWindow) => infoWindow.close());
+            infoWindows.length = 0;
+            document.getElementById("placesList").innerHTML = "";
+        }
+
+        function displayPlaces(places) {
+            const placesList = document.getElementById("placesList");
+
+            places.forEach((place) => {
+                const request = { placeId: place.place_id };
+
+                service.getDetails(request, (placeDetails, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        // Add marker to map
+                        const marker = new google.maps.Marker({
+                            position: placeDetails.geometry.location,
+                            map: map,
+                            title: placeDetails.name,
+                        });
+                        markers.push(marker);
+
+                        // Add InfoWindow to marker
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: `<div>
+                                        <h3>${placeDetails.name}</h3>
+                                        <p>Rating: ${placeDetails.rating || "N/A"}</p>
+                                        <p>${placeDetails.vicinity}</p>
+                                        ${
+                                          placeDetails.website
+                                            ? `<a href="${placeDetails.website}" target="_blank">Visit Website</a>`
+                                            : `<p>No website available</p>`
+                                        }
+                                      </div>`,
+                        });
+                        infoWindows.push(infoWindow);
+
+                        marker.addListener("click", () => {
+                            infoWindows.forEach((info) => info.close());
+                            infoWindow.open(map, marker);
+                        });
+
+                        // Add place to the list
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `
+                            <div class="place-name">${placeDetails.name}</div>
+                            <div class="place-rating">
+                                <span>Rating: ${placeDetails.rating || "N/A"}</span>
+                                ${generateStars(placeDetails.rating || 0)} 
+                                (${placeDetails.user_ratings_total || 0} reviews)
+                            </div>
+                            ${
+                              placeDetails.website
+                                ? `<div class="place-website"><a href="${placeDetails.website}" target="_blank">Visit Website</a></div>`
+                                : ""
+                            }
+                            <div class="action-buttons">
+                                <button onclick="addToFavorites('${placeDetails.name}')">Add to Favorites</button>
+                                <button onclick="markOrdered('${placeDetails.name}')">Ordered Here</button>
+                            </div>
+                        `;
+                        placesList.appendChild(listItem);
+                    }
+                });
+            });
+        }
+
+        function generateStars(rating) {
+            const maxStars = 5;
+            let starsHTML = '<div class="stars">';
+            for (let i = 1; i <= maxStars; i++) {
+                starsHTML += i <= Math.round(rating)
+                    ? '<span class="star filled">&#9733;</span>'
+                    : '<span class="star empty">&#9734;</span>';
+            }
+            starsHTML += '</div>';
+            return starsHTML;
+        }
+
+        const favorites = [];
+        const orderedHere = [];
+
+        function addToFavorites(name) {
+            if (!favorites.includes(name)) {
+                favorites.push(name);
+                alert(`${name} added to Favorites!`);
+            } else {
+                alert(`${name} is already in Favorites.`);
+            }
+        }
+
+        function markOrdered(name) {
+            if (!orderedHere.includes(name)) {
+                orderedHere.push(name);
+                alert(`${name} marked as Ordered!`);
+            } else {
+                alert(`${name} is already marked as Ordered.`);
+            }
+        }
+    </script>
+</body>
+</html>

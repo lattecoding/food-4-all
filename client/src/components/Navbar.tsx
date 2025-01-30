@@ -1,10 +1,25 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import auth from "../utils/auth";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Button,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 const Navbar = () => {
   const [loginCheck, setLoginCheck] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+  const { darkMode, toggleDarkMode } = useOutletContext<{ darkMode: boolean; toggleDarkMode: () => void }>();
 
   const checkLogin = () => {
     if (auth.loggedIn()) {
@@ -13,93 +28,92 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    console.log(loginCheck);
     checkLogin();
   }, []);
 
-  return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary w-100">
-      <div className="container-lg">
-        <a className="navbar-brand" href="#">
-          {" "}
-          Food 4 All
-        </a>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div className="navbar-nav">
-            <a className="nav-item nav-link active" href="#">
-              Home
-            </a>
-            <a className="nav-item nav-link" href="#">
-              Profiles
-            </a>
-            <div className="dropdown">
-              <button
-                className="nav-item nav-link dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Options
-              </button>
-              <ul className="dropdown-menu">
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Recent Searches
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Favorites
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Switch User
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="d-flex align-items-center">
-            {loginCheck ? (
-              <>
-                {/* Display user's name from the token */}
-                <span className="me-3">
-                  Hey, {auth.getProfile()?.username || "User"}!
-                </span>
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-                <button
-                  className="btn btn-outline-secondary"
-                  type="button"
-                  onClick={() => {
-                    auth.logout();
-                  }}
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" sx={{ backgroundColor: darkMode ? "#121212" : "#f8f8f8", px: 2 }}>
+        <Toolbar>
+          {/* Left Side: Logo & Hamburger Menu */}
+          <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+            <img 
+              src="/logo.jpeg" 
+              alt="Food 4 All Logo" 
+              style={{ height: "70px", marginRight: "10px" }} 
+            />
+
+            {/* Hamburger Menu */}
+            {loginCheck && (
+              <>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="primary"
+                  aria-label="menu"
+                  onClick={handleMenuOpen}
+                  sx={{ color: darkMode ? "#d2e8e4" : "#100f0d" }}
                 >
-                  Logout
-                </button>
+                  <MenuIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  sx={{ mt: 1 }}
+                >
+                  <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
+                  <MenuItem onClick={() => navigate("/favorites")}>Favorites</MenuItem>
+                  <MenuItem onClick={() => navigate("/search-history")}>Search History</MenuItem>
+                </Menu>
               </>
-            ) : (
-              <button className="btn btn-secondary">
-                <Link to="/login" className="text-decoration-none text-white">
-                  Login
-                </Link>
-              </button>
             )}
-          </div>
-        </div>
-      </div>
-    </nav>
+          </Box>
+
+          {/* Dark Mode Toggle */}
+          <IconButton onClick={toggleDarkMode} sx={{ mx: 2 }}>
+            {darkMode ? <LightModeIcon sx={{ color: "#d2e8e4" }} /> : <DarkModeIcon sx={{ color: "#100f0d" }} />}
+          </IconButton>
+
+          {loginCheck ? (
+            <>
+              {/* User Greeting */}
+              <Typography variant="body1" sx={{ mr: 2, color: darkMode ? "#d2e8e4" : "#100f0d" }}>
+                Hey, {auth.getProfile()?.username || "User"}!
+              </Typography>
+
+              {/* Logout Button */}
+              <Button
+                onClick={() => {
+                  auth.logout();
+                  navigate("/login");
+                }}
+                sx={{
+                  color: darkMode ? "#d2e8e4" : "#100f0d",
+                  "&:hover": { backgroundColor: darkMode ? "#100f0d" : "#d2e8e4" }
+                }}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <Button>
+              <Link to="/login" className="text-decoration-none" style={{ color: darkMode ? "#d2e8e4" : "#100f0d" }}>
+                Login
+              </Link>
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 };
 

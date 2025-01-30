@@ -1,21 +1,29 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import Auth from "../utils/auth";
-import { login } from "../api/authAPI";
+import { signup } from "../api/authAPI";
 import { useNavigate } from "react-router-dom";
 import { Box, TextField, Button, Typography, Divider, Paper } from "@mui/material";
 
-const Login = () => {
+interface SignUpData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+const SignUp = () => {
   const navigate = useNavigate();
-  const [loginData, setLoginData] = useState({
+  const [signUpData, setSignUpData] = useState<SignUpData>({
     username: "",
+    email: "",
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false); // Loading state for button
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setLoginData({
-      ...loginData,
+    setSignUpData({
+      ...signUpData,
       [name]: value,
     });
   };
@@ -23,22 +31,24 @@ const Login = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
-    if (!loginData.username || !loginData.password) {
+    if (!signUpData.username || !signUpData.email || !signUpData.password) {
       setError("All fields are required");
+      setLoading(false);
       return;
     }
 
     try {
-      const token = await login({
-        username: loginData.username,
-        password: loginData.password,
-      });
-
-      Auth.login(token);
-      navigate("/");
+      const token = await signup(signUpData);
+      if (token) {
+        Auth.login(token);
+        navigate("/"); // Redirect to homepage after successful sign-up
+      }
     } catch (err) {
-      setError("Login failed. Please try again.");
+      setError("Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,10 +79,10 @@ const Login = () => {
           color="#38793b"
           sx={{ mb: 2 }}
         >
-          Welcome, Fellow Foodie!
+          Create an Account
         </Typography>
         <Typography variant="body1" color="#100f0d" sx={{ mb: 3 }}>
-          Already Registered? Login
+          Join us and start discovering food spots!
         </Typography>
 
         {error && (
@@ -81,7 +91,7 @@ const Login = () => {
           </Typography>
         )}
 
-        {/* Login Form */}
+        {/* Sign-Up Form */}
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -92,7 +102,18 @@ const Login = () => {
             required
             label="Username"
             name="username"
-            value={loginData.username}
+            value={signUpData.username}
+            onChange={handleChange}
+            InputLabelProps={{ style: { color: "#100f0d" } }}
+            sx={{ bgcolor: "white", borderRadius: 1 }}
+          />
+          <TextField
+            fullWidth
+            required
+            type="email"
+            label="Email"
+            name="email"
+            value={signUpData.email}
             onChange={handleChange}
             InputLabelProps={{ style: { color: "#100f0d" } }}
             sx={{ bgcolor: "white", borderRadius: 1 }}
@@ -103,7 +124,7 @@ const Login = () => {
             type="password"
             label="Password"
             name="password"
-            value={loginData.password}
+            value={signUpData.password}
             onChange={handleChange}
             InputLabelProps={{ style: { color: "#100f0d" } }}
             sx={{ bgcolor: "white", borderRadius: 1 }}
@@ -121,26 +142,27 @@ const Login = () => {
               borderRadius: 2,
               "&:hover": { bgcolor: "#100f0d" },
             }}
+            disabled={loading}
           >
-            LOGIN
+            {loading ? "Signing Up..." : "Sign Up"}
           </Button>
         </Box>
 
         {/* Divider for visual separation */}
         <Divider sx={{ my: 4, width: "100%", bgcolor: "#100f0d" }} />
 
-        {/* New User Section */}
+        {/* Already Registered Section */}
         <Typography variant="body1" fontWeight="bold" color="#100f0d">
-          New User?
+          Already have an account?
         </Typography>
         <Typography variant="body2" color="#38793b" sx={{ mb: 2 }}>
-          Sign Up Now
+          Log in now
         </Typography>
 
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => navigate("/signup")} // Correctly navigate to the SignUp page
+          onClick={() => navigate("/login")}
           sx={{
             fontSize: "1rem",
             py: 1.2,
@@ -150,11 +172,11 @@ const Login = () => {
             "&:hover": { bgcolor: "#100f0d", color: "white" },
           }}
         >
-          SIGN UP
+          LOGIN
         </Button>
       </Paper>
     </Box>
   );
 };
 
-export default Login;
+export default SignUp;
