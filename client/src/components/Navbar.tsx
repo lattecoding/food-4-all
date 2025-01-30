@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import auth from "../utils/auth";
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-// import MenuIcon from '@mui/icons-material/Menu';
-import {Button} from '@mui/material';
-// import AccountCircle from '@mui/icons-material/AccountCircle';
-// import Switch from '@mui/material/Switch';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import FormGroup from '@mui/material/FormGroup';
-// import MenuItem from '@mui/material/MenuItem';
-// import Menu from '@mui/material/Menu';
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Button,
+  Menu,
+  MenuItem,
+  Typography
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const Navbar = () => {
   const [loginCheck, setLoginCheck] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const checkLogin = () => {
     if (auth.loggedIn()) {
@@ -24,60 +24,98 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    console.log(loginCheck);
     checkLogin();
-  });
+  }, []);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-        <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: "white"}}>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" sx={{ backgroundColor: "#f8f8f8", px: 2 }}>
         <Toolbar>
-        <Box sx={{ flexGrow: 1 }}>
-          <img 
-            src="/logo.jpeg" 
-            alt="Food 4 All Logo" 
-            style={{ height: "70px" }} 
-          />
-        </Box>
-          <IconButton
-            size="large"
-            edge="start"
-            color="primary"
-            aria-label="menu"
-            sx={{ mr: 2, color: "black" }}
-          >
-            {/* <MenuIcon /> */}
-          </IconButton>
-          <div>
-           {loginCheck ? (
-              <>
-                {/* Display user's name from the token */}
-               <span className="me-3">
-                Hey, {auth.getProfile()?.username || "User"}!
-               </span>
+          {/* Left Side: Logo & Hamburger Menu */}
+          <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+            <img 
+              src="/logo.jpeg" 
+              alt="Food 4 All Logo" 
+              style={{ height: "70px", marginRight: "10px" }} 
+            />
 
-                <Button 
-                  onClick={() => {
-                    auth.logout();
-                  }}
-                  sx={{ color: "black" }} // Updated color to black
+            {/* Hamburger Menu */}
+            {loginCheck && (
+              <>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="primary"
+                  aria-label="menu"
+                  onClick={handleMenuOpen}
+                  sx={{ color: "#100f0d" }}
                 >
-                  Logout
-                </Button>
+                  <MenuIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  sx={{ mt: 1 }}
+                >
+                  <MenuItem onClick={handleMenuClose}>
+                    <Link to="/profile" style={{ textDecoration: "none", color: "black" }}>
+                      Profile
+                    </Link>
+                  </MenuItem>
+                  <MenuItem onClick={handleMenuClose}>
+                    <Link to="/favorites" style={{ textDecoration: "none", color: "black" }}>
+                      Favorites
+                    </Link>
+                  </MenuItem>
+                  <MenuItem onClick={handleMenuClose}>
+                    <Link to="/history" style={{ textDecoration: "none", color: "black" }}>
+                      Search History
+                    </Link>
+                  </MenuItem>
+                </Menu>
               </>
-            ) : (
-              <Button>
-                <Link to="/login" className="text-decoration-none text-white">
-                  Login
-                </Link>
-              </Button>
             )}
-          </div>
-            
-          </Toolbar>
+          </Box>
+
+          {loginCheck ? (
+            <>
+              {/* User Greeting */}
+              <Typography variant="body1" sx={{ mr: 2, color: "#100f0d" }}>
+                Hey, {auth.getProfile()?.username || "User"}!
+              </Typography>
+
+              {/* Logout Button */}
+              <Button
+                onClick={() => {
+                  auth.logout();
+                }}
+                sx={{
+                  color: "#100f0d",
+                  "&:hover": { backgroundColor: "#d2e8e4" }
+                }}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <Button>
+              <Link to="/login" className="text-decoration-none text-black">
+                Login
+              </Link>
+            </Button>
+          )}
+        </Toolbar>
       </AppBar>
     </Box>
-
   );
 };
 
