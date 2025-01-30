@@ -2,12 +2,7 @@ import { useState, FormEvent, ChangeEvent } from "react";
 import Auth from "../utils/auth";
 import { login } from "../api/authAPI";
 import { useNavigate } from "react-router-dom";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
+import { Box, TextField, Button, Typography, Divider, Paper } from "@mui/material";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -52,32 +47,31 @@ const Login = () => {
       sx={{
         display: "flex",
         justifyContent: "center",
-        alignItems: "flex-start",
+        alignItems: "center",
         height: "100vh",
         bgcolor: "#d2e8e4", // Soft green background
-        pt: 10, // Push content higher
       }}
     >
       <Paper
-        elevation={3}
+        elevation={4}
         sx={{
-          p: 4,
+          p: 5,
           width: 400,
           textAlign: "center",
-          bgcolor: "white",
-          borderRadius: 2,
+          bgcolor: "#f8f8f8",
+          borderRadius: 3,
         }}
       >
         {/* Header Text */}
         <Typography
           variant="h4"
           fontWeight="bold"
-          color="#100f0d"
+          color="#38793b"
           sx={{ mb: 2 }}
         >
           Welcome, Fellow Foodie!
         </Typography>
-        <Typography variant="body2" color="#38793b" sx={{ mb: 4 }}>
+        <Typography variant="body1" color="#100f0d" sx={{ mb: 3 }}>
           Already Registered? Login
         </Typography>
 
@@ -87,7 +81,12 @@ const Login = () => {
           </Typography>
         )}
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {/* Login Form */}
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
           <TextField
             fullWidth
             required
@@ -96,6 +95,7 @@ const Login = () => {
             value={loginData.username}
             onChange={handleChange}
             InputLabelProps={{ style: { color: "#100f0d" } }}
+            sx={{ bgcolor: "white", borderRadius: 1 }}
           />
           <TextField
             fullWidth
@@ -106,18 +106,21 @@ const Login = () => {
             value={loginData.password}
             onChange={handleChange}
             InputLabelProps={{ style: { color: "#100f0d" } }}
+            sx={{ bgcolor: "white", borderRadius: 1 }}
           />
           <Button
             type="submit"
             variant="contained"
             fullWidth
             sx={{
-              mt: 3,
-              bgcolor: "#100f0d",
+              mt: 2,
+              bgcolor: "#38793b",
               color: "white",
-              "&:hover": { bgcolor: "#38793b" },
+              fontSize: "1.1rem",
+              py: 1.2,
+              borderRadius: 2,
+              "&:hover": { bgcolor: "#100f0d" },
             }}
-            onClick={handleSubmit}
           >
             LOGIN
           </Button>
@@ -139,8 +142,11 @@ const Login = () => {
           fullWidth
           onClick={() => navigate("/signup")} // Correctly navigate to the SignUp page
           sx={{
+            fontSize: "1rem",
+            py: 1.2,
             color: "#100f0d",
             borderColor: "#100f0d",
+            borderRadius: 2,
             "&:hover": { bgcolor: "#100f0d", color: "white" },
           }}
         >

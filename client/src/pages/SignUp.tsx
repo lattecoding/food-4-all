@@ -1,10 +1,8 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import Auth from "../utils/auth";
-import { signup } from "../api/authAPI"; // Uses the existing signup function in authAPI
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { signup } from "../api/authAPI";
+import { useNavigate } from "react-router-dom";
+import { Box, TextField, Button, Typography, Divider, Paper } from "@mui/material";
 
 interface SignUpData {
   username: string;
@@ -13,6 +11,7 @@ interface SignUpData {
 }
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [signUpData, setSignUpData] = useState<SignUpData>({
     username: "",
     email: "",
@@ -44,6 +43,7 @@ const SignUp = () => {
       const token = await signup(signUpData);
       if (token) {
         Auth.login(token);
+        navigate("/"); // Redirect to homepage after successful sign-up
       }
     } catch (err) {
       setError("Signup failed. Please try again.");
@@ -54,69 +54,127 @@ const SignUp = () => {
 
   return (
     <Box
-      component="form"
-      onSubmit={handleSubmit}
       sx={{
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
         height: "100vh",
-        textAlign: "center",
-        p: 3,
+        bgcolor: "#d2e8e4", // Soft green background
       }}
     >
-      <Typography variant="h4" fontWeight="bold" sx={{ mb: 3 }}>
-        Create an Account
-      </Typography>
-
-      {error && (
-        <Typography variant="body2" color="error" sx={{ mb: 2 }}>
-          {error}
-        </Typography>
-      )}
-
-      <Box sx={{ width: "100%", maxWidth: 400 }}>
-        <TextField
-          fullWidth
-          required
-          label="Username"
-          name="username"
-          value={signUpData.username}
-          onChange={handleChange}
-          margin="normal"
-        />
-        <TextField
-          fullWidth
-          required
-          type="email"
-          label="Email"
-          name="email"
-          value={signUpData.email}
-          onChange={handleChange}
-          margin="normal"
-        />
-        <TextField
-          fullWidth
-          required
-          type="password"
-          label="Password"
-          name="password"
-          value={signUpData.password}
-          onChange={handleChange}
-          margin="normal"
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 3 }}
-          disabled={loading}
+      <Paper
+        elevation={4}
+        sx={{
+          p: 5,
+          width: 400,
+          textAlign: "center",
+          bgcolor: "#f8f8f8",
+          borderRadius: 3,
+        }}
+      >
+        {/* Header Text */}
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          color="#38793b"
+          sx={{ mb: 2 }}
         >
-          {loading ? "Signing Up..." : "Sign Up"}
+          Create an Account
+        </Typography>
+        <Typography variant="body1" color="#100f0d" sx={{ mb: 3 }}>
+          Join us and start discovering food spots!
+        </Typography>
+
+        {error && (
+          <Typography variant="body2" color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
+
+        {/* Sign-Up Form */}
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
+          <TextField
+            fullWidth
+            required
+            label="Username"
+            name="username"
+            value={signUpData.username}
+            onChange={handleChange}
+            InputLabelProps={{ style: { color: "#100f0d" } }}
+            sx={{ bgcolor: "white", borderRadius: 1 }}
+          />
+          <TextField
+            fullWidth
+            required
+            type="email"
+            label="Email"
+            name="email"
+            value={signUpData.email}
+            onChange={handleChange}
+            InputLabelProps={{ style: { color: "#100f0d" } }}
+            sx={{ bgcolor: "white", borderRadius: 1 }}
+          />
+          <TextField
+            fullWidth
+            required
+            type="password"
+            label="Password"
+            name="password"
+            value={signUpData.password}
+            onChange={handleChange}
+            InputLabelProps={{ style: { color: "#100f0d" } }}
+            sx={{ bgcolor: "white", borderRadius: 1 }}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              mt: 2,
+              bgcolor: "#38793b",
+              color: "white",
+              fontSize: "1.1rem",
+              py: 1.2,
+              borderRadius: 2,
+              "&:hover": { bgcolor: "#100f0d" },
+            }}
+            disabled={loading}
+          >
+            {loading ? "Signing Up..." : "Sign Up"}
+          </Button>
+        </Box>
+
+        {/* Divider for visual separation */}
+        <Divider sx={{ my: 4, width: "100%", bgcolor: "#100f0d" }} />
+
+        {/* Already Registered Section */}
+        <Typography variant="body1" fontWeight="bold" color="#100f0d">
+          Already have an account?
+        </Typography>
+        <Typography variant="body2" color="#38793b" sx={{ mb: 2 }}>
+          Log in now
+        </Typography>
+
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={() => navigate("/login")}
+          sx={{
+            fontSize: "1rem",
+            py: 1.2,
+            color: "#100f0d",
+            borderColor: "#100f0d",
+            borderRadius: 2,
+            "&:hover": { bgcolor: "#100f0d", color: "white" },
+          }}
+        >
+          LOGIN
         </Button>
-      </Box>
+      </Paper>
     </Box>
   );
 };
