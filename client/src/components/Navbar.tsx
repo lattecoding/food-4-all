@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import auth from "../utils/auth";
 import {
   AppBar,
@@ -9,13 +9,17 @@ import {
   Button,
   Menu,
   MenuItem,
-  Typography
+  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 const Navbar = () => {
   const [loginCheck, setLoginCheck] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+  const { darkMode, toggleDarkMode } = useOutletContext<{ darkMode: boolean; toggleDarkMode: () => void }>();
 
   const checkLogin = () => {
     if (auth.loggedIn()) {
@@ -37,7 +41,7 @@ const Navbar = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: "#f8f8f8", px: 2 }}>
+      <AppBar position="static" sx={{ backgroundColor: darkMode ? "#121212" : "#f8f8f8", px: 2 }}>
         <Toolbar>
           {/* Left Side: Logo & Hamburger Menu */}
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
@@ -56,7 +60,7 @@ const Navbar = () => {
                   color="primary"
                   aria-label="menu"
                   onClick={handleMenuOpen}
-                  sx={{ color: "#100f0d" }}
+                  sx={{ color: darkMode ? "#d2e8e4" : "#100f0d" }}
                 >
                   <MenuIcon />
                 </IconButton>
@@ -66,30 +70,23 @@ const Navbar = () => {
                   onClose={handleMenuClose}
                   sx={{ mt: 1 }}
                 >
-                  <MenuItem onClick={handleMenuClose}>
-                    <Link to="/profile" style={{ textDecoration: "none", color: "black" }}>
-                      Profile
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleMenuClose}>
-                    <Link to="/favorites" style={{ textDecoration: "none", color: "black" }}>
-                      Favorites
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleMenuClose}>
-                    <Link to="/history" style={{ textDecoration: "none", color: "black" }}>
-                      Search History
-                    </Link>
-                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
+                  <MenuItem onClick={() => navigate("/favorites")}>Favorites</MenuItem>
+                  <MenuItem onClick={() => navigate("/search-history")}>Search History</MenuItem>
                 </Menu>
               </>
             )}
           </Box>
 
+          {/* Dark Mode Toggle */}
+          <IconButton onClick={toggleDarkMode} sx={{ mx: 2 }}>
+            {darkMode ? <LightModeIcon sx={{ color: "#d2e8e4" }} /> : <DarkModeIcon sx={{ color: "#100f0d" }} />}
+          </IconButton>
+
           {loginCheck ? (
             <>
               {/* User Greeting */}
-              <Typography variant="body1" sx={{ mr: 2, color: "#100f0d" }}>
+              <Typography variant="body1" sx={{ mr: 2, color: darkMode ? "#d2e8e4" : "#100f0d" }}>
                 Hey, {auth.getProfile()?.username || "User"}!
               </Typography>
 
@@ -97,10 +94,11 @@ const Navbar = () => {
               <Button
                 onClick={() => {
                   auth.logout();
+                  navigate("/login");
                 }}
                 sx={{
-                  color: "#100f0d",
-                  "&:hover": { backgroundColor: "#d2e8e4" }
+                  color: darkMode ? "#d2e8e4" : "#100f0d",
+                  "&:hover": { backgroundColor: darkMode ? "#100f0d" : "#d2e8e4" }
                 }}
               >
                 Logout
@@ -108,7 +106,7 @@ const Navbar = () => {
             </>
           ) : (
             <Button>
-              <Link to="/login" className="text-decoration-none text-black">
+              <Link to="/login" className="text-decoration-none" style={{ color: darkMode ? "#d2e8e4" : "#100f0d" }}>
                 Login
               </Link>
             </Button>

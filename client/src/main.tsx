@@ -1,7 +1,6 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./index.css";
-
+import SearchHistory from "./pages/SearchHistory";
 import App from "./App.tsx";
 import Board from "./pages/NewBoard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
@@ -34,11 +33,20 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/signup", // Define the route for the SignUp page
+        path: "/signup",
         element: (
           <div>
             <Navbar />
             <SignUp />
+          </div>
+        ),
+      },
+      {
+        path: "/search-history", // New Route for Search History Page
+        element: (
+          <div>
+            <Navbar />
+            <SearchHistory />
           </div>
         ),
       },
