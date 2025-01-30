@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "../client/src/pages/MapResults.tsx", "../client/src/pages/SearchControls.tsx"]
 }
