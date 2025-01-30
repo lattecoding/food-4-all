@@ -1,12 +1,12 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./index.css";
-
+import SearchHistory from "./pages/SearchHistory";
 import App from "./App.tsx";
-import Board from "./pages/Board.tsx";
+import Board from "./pages/NewBoard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Login from "./pages/Login.tsx";
-import Navbar from './components/Navbar';
+import Navbar from "./components/Navbar";
+import SignUp from "./pages/SignUp.tsx";
 
 const router = createBrowserRouter([
   {
@@ -16,19 +16,39 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: 
+        element: (
           <div>
             <Navbar />
             <Board />
-          </div>,
+          </div>
+        ),
       },
       {
         path: "/login",
-        element: 
+        element: (
           <div>
             <Navbar />
             <Login />
-          </div>,
+          </div>
+        ),
+      },
+      {
+        path: "/signup",
+        element: (
+          <div>
+            <Navbar />
+            <SignUp />
+          </div>
+        ),
+      },
+      {
+        path: "/search-history", // New Route for Search History Page
+        element: (
+          <div>
+            <Navbar />
+            <SearchHistory />
+          </div>
+        ),
       },
     ],
   },
