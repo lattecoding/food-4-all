@@ -35,12 +35,14 @@ const App = () => {
   });
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <main>
-        <Outlet context={{ darkMode, toggleDarkMode }} />
-      </main>
-    </ThemeProvider>
+    <div>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <main>
+          <Outlet context={{ darkMode, toggleDarkMode }} />
+        </main>
+      </ThemeProvider>
+    </div>
   );
 };
 
