@@ -56,9 +56,8 @@ npm run seed
 3. Environment Variables - Create a .env file in the root directory and add the following:
 
 ```
-PORT=3000
-DB_URI=your_mongodb_uri
-GOOGLE_MAPS_API_KEY=your_api_key
+MONGODB_URI='mongodb://127.0.0.1:27017/food4all-db'
+JWT_SECRET_KEY=''
 ```
 
 4. Run the Application
