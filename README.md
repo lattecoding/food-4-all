@@ -15,7 +15,7 @@ Food 4 All is a user-friendly web application designed to help users effortlessl
 
 
 ## Live Web Application
-Click here to view the live website of Food 4 All:
+Click here to view the live website of Food 4 All: https://food-4-all.onrender.com
 
 ## Features
 - Search Functionality: Users can search for restaurants by type of cuisine, zip code, and radius (miles).
